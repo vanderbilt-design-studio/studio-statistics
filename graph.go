@@ -34,10 +34,10 @@ func main() {
 			panic(err)
 		}
 		/*
-		var topen, tclose = time.Date(t.Year(), t.Month(), t.Day(), 12, 00, 00, 0, time.Local), time.Date(t.Year(), t.Month(), t.Day(), 22, 00, 00, 0, time.Local)
-		if t.Before(topen) || t.After(tclose) {
-			continue
-		}
+			var topen, tclose = time.Date(t.Year(), t.Month(), t.Day(), 12, 00, 00, 0, time.Local), time.Date(t.Year(), t.Month(), t.Day(), 22, 00, 00, 0, time.Local)
+			if t.Before(topen) || t.After(tclose) {
+				continue
+			}
 		*/
 		open, err := strconv.ParseBool(rows[i][1])
 		if err != nil {
@@ -58,12 +58,12 @@ func main() {
 	}
 	graph := chart.Chart{
 		Title:  "Design Studio Statistics",
-		Width:  1920*10,
+		Width:  1920 * 10,
 		Height: 800,
 		XAxis: chart.XAxis{
-			Name:      "Time",
-			NameStyle: chart.StyleShow(),
-			Style:     chart.StyleShow(),
+			Name:           "Time",
+			NameStyle:      chart.StyleShow(),
+			Style:          chart.StyleShow(),
 			ValueFormatter: chart.TimeValueFormatterWithFormat("Mon Jan _2 3:04PM"),
 		},
 		YAxis: chart.YAxis{
@@ -94,12 +94,31 @@ func main() {
 		panic("Failed to open file for output")
 	}
 	graph.Elements = []chart.Renderable{
-		chart.LegendLeft(&graph),
+		chart.Legend(&graph),
 	}
 	err = graph.Render(chart.PNG, fout)
 	if err != nil {
 		panic(err)
 	}
+	fout.Close()
+
+	fcsvout, err := os.Create("graph.csv")
+	if err != nil {
+		panic(err)
+	}
+	rows = make([][]string, len(times))
+	for i := range times {
+		rows[i] = []string{
+			times[i].Format(time.RFC3339Nano),
+			fmt.Sprintf("%v", opens[i]),
+			fmt.Sprintf("%v", switchStates[i]),
+			fmt.Sprintf("%v", motions[i]),
+		}
+	}
+	w := csv.NewWriter(fcsvout)
+	w.WriteAll(rows)
+	w.Flush()
+	fcsvout.Close()
 	fmt.Println("Done!")
 }
 

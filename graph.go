@@ -58,13 +58,13 @@ func main() {
 	}
 	graph := chart.Chart{
 		Title:  "Design Studio Statistics",
-		Width:  3840,
-		Height: 2160,
+		Width:  1920*10,
+		Height: 800,
 		XAxis: chart.XAxis{
 			Name:      "Time",
 			NameStyle: chart.StyleShow(),
 			Style:     chart.StyleShow(),
-			ValueFormatter: chart.TimeHourValueFormatter,
+			ValueFormatter: chart.TimeValueFormatterWithFormat("Mon Jan _2 3:04PM"),
 		},
 		YAxis: chart.YAxis{
 			Name:      "Value",

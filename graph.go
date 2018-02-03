@@ -8,18 +8,15 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+	"io"
 )
 
 var alphanumeric = regexp.MustCompile("(?m)[^a-zA-Z0-9, :]+")
 
-func main() {
-	file, err := os.Open("activity.log")
+func MakeGraph(r io.Reader, w io.Writer) (error) {
+	rows, err := csv.NewReader(r).ReadAll()
 	if err != nil {
-		panic("Failed to open file")
-	}
-	rows, err := csv.NewReader(file).ReadAll()
-	if err != nil {
-		panic("Failed to read from file")
+		return err
 	}
 	times := make([]time.Time, 0, len(rows))
 	opens := make([]float64, 0, len(rows))
@@ -41,15 +38,15 @@ func main() {
 		*/
 		open, err := strconv.ParseBool(rows[i][1])
 		if err != nil {
-			panic("Failed to parse open state")
+			return err
 		}
 		switchState, err := strconv.ParseInt(rows[i][2], 10, 32)
 		if err != nil {
-			panic("Failed to parse switchState")
+			return err
 		}
 		motion, err := strconv.ParseBool(rows[i][3])
 		if err != nil {
-			panic("Failed to parse if motion")
+			return err
 		}
 		times = append(times, t)
 		opens = append(opens, Btof(open))
@@ -89,37 +86,33 @@ func main() {
 			},
 		},
 	}
-	fout, err := os.Create("graph.png")
-	if err != nil {
-		panic("Failed to open file for output")
-	}
 	graph.Elements = []chart.Renderable{
 		chart.Legend(&graph),
 	}
-	err = graph.Render(chart.PNG, fout)
+	err = graph.Render(chart.PNG, w)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	fout.Close()
 
-	fcsvout, err := os.Create("graph.csv")
-	if err != nil {
-		panic(err)
-	}
-	rows = make([][]string, len(times))
-	for i := range times {
-		rows[i] = []string{
-			times[i].Format(time.RFC3339Nano),
-			fmt.Sprintf("%v", opens[i]),
-			fmt.Sprintf("%v", switchStates[i]),
-			fmt.Sprintf("%v", motions[i]),
-		}
-	}
-	w := csv.NewWriter(fcsvout)
-	w.WriteAll(rows)
-	w.Flush()
-	fcsvout.Close()
-	fmt.Println("Done!")
+	return nil
+
+	//fcsvout, err := os.Create("graph.csv")
+	//if err != nil {
+	//	panic(err)
+	//}
+	//rows = make([][]string, len(times))
+	//for i := range times {
+	//	rows[i] = []string{
+	//		times[i].Format(time.RFC3339Nano),
+	//		fmt.Sprintf("%v", opens[i]),
+	//		fmt.Sprintf("%v", switchStates[i]),
+	//		fmt.Sprintf("%v", motions[i]),
+	//	}
+	//}
+	//w := csv.NewWriter(fcsvout)
+	//w.WriteAll(rows)
+	//w.Flush()
+	//fcsvout.Close()
 }
 
 func Btof(v bool) float64 {

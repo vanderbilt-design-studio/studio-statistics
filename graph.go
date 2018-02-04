@@ -2,9 +2,7 @@ package studio_statistics
 
 import (
 	"encoding/csv"
-	"fmt"
 	"github.com/wcharczuk/go-chart"
-	"os"
 	"regexp"
 	"strconv"
 	"time"

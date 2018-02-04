@@ -49,9 +49,9 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 			return err
 		}
 		times = append(times, t)
-		opens = append(opens, Btof(open))
+		opens = append(opens, btof(open))
 		switchStates = append(switchStates, float64(switchState))
-		motions = append(motions, Btof(motion))
+		motions = append(motions, btof(motion))
 	}
 	graph := chart.Chart{
 		Title:  "Design Studio Statistics",
@@ -115,7 +115,7 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 	//fcsvout.Close()
 }
 
-func Btof(v bool) float64 {
+func btof(v bool) float64 {
 	if v {
 		return 1.0
 	}

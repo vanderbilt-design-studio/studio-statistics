@@ -1,4 +1,4 @@
-package main
+package studio_statistics
 
 import (
 	"encoding/csv"

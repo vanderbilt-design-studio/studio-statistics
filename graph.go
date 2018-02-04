@@ -24,9 +24,12 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 		for j := 0; j < len(rows[i]); j++ {
 			rows[i][j] = alphanumeric.ReplaceAllString(rows[i][j], "")
 		}
-		t, err := time.Parse("02 Jan 06 15:04 MST", rows[i][0])
+		t, err := time.Parse(time.RFC822, rows[i][0])
 		if err != nil {
-			panic(err)
+			t, err = time.Parse(time.RFC3339Nano, rows[i][0])
+			if err != nil {
+				panic(err)
+			}
 		}
 		/*
 			var topen, tclose = time.Date(t.Year(), t.Month(), t.Day(), 12, 00, 00, 0, time.Local), time.Date(t.Year(), t.Month(), t.Day(), 22, 00, 00, 0, time.Local)

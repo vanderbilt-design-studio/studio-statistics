@@ -9,7 +9,7 @@ import (
 	"io"
 )
 
-var alphanumeric = regexp.MustCompile("(?m)[^a-zA-Z0-9, :-]+")
+var alphanumeric = regexp.MustCompile("(?m)[^a-zA-Z0-9, :-.]+")
 
 func MakeGraph(r io.Reader, w io.Writer) (error) {
 	rows, err := csv.NewReader(r).ReadAll()

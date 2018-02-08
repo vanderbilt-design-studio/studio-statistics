@@ -54,10 +54,11 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 		switchStates = append(switchStates, float64(switchState))
 		motions = append(motions, btof(motion))
 	}
+	width := int(times[len(times)-1].Sub(times[0]).Seconds()/30.0)
 	graph := chart.Chart{
 		Title:  "Design Studio Statistics",
-		Width:  1920 * 10,
-		Height: 800,
+		Width:  width,
+		Height: 600,
 		XAxis: chart.XAxis{
 			Name:           "Time",
 			NameStyle:      chart.StyleShow(),

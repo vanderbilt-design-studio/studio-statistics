@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 	"io"
+	"fmt"
 )
 
 var alphanumeric = regexp.MustCompile("(?m)[^a-zA-Z0-9, \\-:.]+")
@@ -31,12 +32,9 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 				panic(err)
 			}
 		}
-		/*
-			var topen, tclose = time.Date(t.Year(), t.Month(), t.Day(), 12, 00, 00, 0, time.Local), time.Date(t.Year(), t.Month(), t.Day(), 22, 00, 00, 0, time.Local)
-			if t.Before(topen) || t.After(tclose) {
-				continue
-			}
-		*/
+		if t.Add(time.Hour*24*7).Before(time.Now()) {
+			continue
+		}
 		open, err := strconv.ParseBool(rows[i][1])
 		if err != nil {
 			return err
@@ -54,6 +52,7 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 		switchStates = append(switchStates, float64(switchState))
 		motions = append(motions, btof(motion))
 	}
+	fmt.Println("Done parsing data")
 	width := int(times[len(times)-1].Sub(times[0]).Seconds()/30.0)
 	graph := chart.Chart{
 		Title:  "Design Studio Statistics",
@@ -91,6 +90,7 @@ func MakeGraph(r io.Reader, w io.Writer) (error) {
 	graph.Elements = []chart.Renderable{
 		chart.Legend(&graph),
 	}
+	fmt.Println("Rendering graph")
 	err = graph.Render(chart.PNG, w)
 	if err != nil {
 		return err

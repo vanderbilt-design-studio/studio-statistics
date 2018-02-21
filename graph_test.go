@@ -1,9 +1,10 @@
 package studio_statistics
 
 import (
-    "testing"
-    "os"
+	"os"
+	"testing"
 )
+
 func TestMakeGraph(t *testing.T) {
 	in, _ := os.Open("activity.log")
 	out, _ := os.Create("graph.png")
